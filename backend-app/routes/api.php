@@ -4,11 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeviceController;
 
+
+// Rotas públicas
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+
+// Rotas autenticadas
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Rotas de Devices
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/devices', [DeviceController::class, 'index']);
@@ -18,3 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/devices/{id}/use', [DeviceController::class, 'toggleUse']);
 
 });
+
+
