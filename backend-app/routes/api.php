@@ -3,11 +3,22 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\AuthController;
 
 
 // Rotas públicas
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/tokens/create', function (Request $request) {
+
+    $token = $request->user()->createToken($request->token_name);
+
+
+
+    return ['token' => $token->plainTextToken];
+
+});
 
 // Rotas autenticadas
 Route::get('/user', function (Request $request) {
