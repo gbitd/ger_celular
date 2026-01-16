@@ -73,7 +73,9 @@ class DeviceRepository
             AND deleted_at IS NULL
         ");
 
-        return $stmt->execute([...$data, 'id' => $id, 'user_id' => $userId]);
+        $stmt->execute([...$data, 'id' => $id, 'user_id' => $userId]);
+
+        return $stmt->rowCount() > 0;   // Se nenhuma row é afetada, propaga erro de negócio
     }
 
     public function softDelete($id, $userId)
@@ -84,7 +86,9 @@ class DeviceRepository
             WHERE id = :id AND user_id = :user_id
         ");
 
-        return $stmt->execute(['id' => $id, 'user_id' => $userId]);
+        $stmt->execute(['id' => $id, 'user_id' => $userId]);
+
+        return $stmt->rowCount() > 0;
     }
 
     public function toggleUse($id, $userId)
@@ -95,6 +99,8 @@ class DeviceRepository
             WHERE id = :id AND user_id = :user_id
         ");
 
-        return $stmt->execute(['id' => $id, 'user_id' => $userId]);
+        $stmt->execute(['id' => $id, 'user_id' => $userId]);
+
+        return $stmt->rowCount() > 0;
     }
 }
