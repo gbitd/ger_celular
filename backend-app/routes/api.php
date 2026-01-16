@@ -10,29 +10,28 @@ use App\Http\Controllers\AuthController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/tokens/create', function (Request $request) {
-
-    $token = $request->user()->createToken($request->token_name);
-
-
-
-    return ['token' => $token->plainTextToken];
-
-});
 
 // Rotas autenticadas
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->group(function () {
 
+Route::middleware('auth:sanctum')->group(function () {
+    /*
+    // Criar novo token
+    Route::post('/tokens/create', function (Request $request) {
+
+        $token = $request->user()->createToken($request->token_name);
+
+
+
+        return ['token' => $token->plainTextToken];
+    });
+    */
     Route::get('/devices', [DeviceController::class, 'index']);
     Route::post('/devices', [DeviceController::class, 'store']);
     Route::put('/devices/{id}', [DeviceController::class, 'update']);
     Route::delete('/devices/{id}', [DeviceController::class, 'destroy']);
     Route::patch('/devices/{id}/use', [DeviceController::class, 'toggleUse']);
-
 });
-
-
