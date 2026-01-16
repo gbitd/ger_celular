@@ -2,50 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreDeviceRequest;
 use App\Http\Requests\UpdateDeviceRequest;
 use App\Repositories\DeviceRepository;
+use Illuminate\Http\Request;
 
 class DeviceController extends Controller
 {
-    public function index(Request $request, DeviceRepository $repo)
+    private DeviceRepository $devices;
+
+    public function __construct(DeviceRepository $devices)
     {
-        return response()->json(
-            $repo->findByUser(
-                $request->user()->id,
-                $request->all()
-            )
-        );
+        $this->devices = $devices;
     }
 
-    public function store(StoreDeviceRequest $request, DeviceRepository $repo)
+    public function store(StoreDeviceRequest $request)
     {
-        $id = $repo->create([
-            ...$request->validated(),
-            'in_use' => false,
-            'user_id' => $request->user()->id
+        $id = $this->devices->create([
+            'name' => $request->name,
+            'location' => $request->location,
+            'purchase_date' => $request->purchase_date,
+            'in_use' => 0,                              //Mysql trata BOOL como TINYINT. 0 = false, 1 = true
+            'user_id' => $request->user()->id,
         ]);
 
-        return response()->json(['id' => $id], 201);
+        return response()->json([
+            'id' => $id,
+        ], 201);
     }
 
-    public function update(UpdateDeviceRequest $request, $id, DeviceRepository $repo)
+    public function index(Request $request)
     {
-        $repo->update($id, $request->user()->id, $request->validated());
+
+        $list = $this->devices->findByUser(
+            $request->user()->id,
+            $request->only([
+                'in_use',
+                'location',
+                'from',
+                'to',
+            ])
+        );
+
+        return response()->json($list);
+    }
+
+    public function update(UpdateDeviceRequest $request, int $id)
+    {
+        $updated = $this->devices->update(
+            $id,
+            $request->user()->id,
+            $request->validated()
+        );
+
+        if (! $updated) {
+            return response()->json([
+                'message' => 'Dispositivo não encontrado'
+            ], 404);
+        }
+
         return response()->noContent();
     }
 
-    public function destroy($id, DeviceRepository $repo)
+    public function destroy(int $id)
     {
-        $repo->softDelete($id, auth()->id());
+        $deleted = $this->devices->softDelete(
+            $id,
+            auth()->id()
+        );
+
+        if (! $deleted) {
+            return response()->json([
+                'message' => 'Dispositivo não encontrado'
+            ], 404);
+        }
+
         return response()->noContent();
     }
 
-    public function toggleUse($id, DeviceRepository $repo)
+    public function toggleUse(int $id)
     {
-        $repo->toggleUse($id, auth()->id());
+        $updated = $this->devices->toggleUse(
+            $id,
+            auth()->id()
+        );
+
+        if (! $updated) {
+            return response()->json([
+                'message' => 'Dispositivo não encontrado'
+            ], 404);
+        }
+
         return response()->noContent();
     }
+
 }
-
