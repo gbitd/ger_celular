@@ -174,7 +174,7 @@ Os testes foram escritos usando **PHPUnit**, cobrindo:
 
 ### Executar os testes
 ```bash
-php artisan test
+./vendor/bin/sail artisan test
 ```
 
 ---
@@ -185,7 +185,7 @@ A documentação da API está disponível em uma **Postman Collection**.
 
 Arquivo:
 ```
-~/ger_celular API.postman_collection.json
+./ger_celular API.postman_collection.json
 ```
 
 ### Como usar
