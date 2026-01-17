@@ -185,7 +185,7 @@ A documentação da API está disponível em uma **Postman Collection**.
 
 Arquivo:
 ```
-devices-api.postman_collection.json
+~/ger_celular API.postman_collection.json
 ```
 
 ### Como usar

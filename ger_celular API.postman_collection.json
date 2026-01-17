@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "57967078-0d4c-463c-8beb-b4ab91c4e9f0",
+		"name": "ger_celular API",
+		"description": "API REST para gerenciamento de dispositivos celulares (Laravel 12 + Sanctum)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45068717"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"  pm.collectionVariables.set('token', pm.response.json().token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Joao Manoel\",\n  \"email\": \"joao@test.com\",\n  \"password\": \"12334563\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Registrar um usuário"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"  pm.collectionVariables.set('token', pm.response.json().token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"joao@test.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Fazer login de usuário"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": "### Fazer logout do usuário autenticado atual"
+					},
+					"response": []
+				}
+			],
+			"description": "## Rotas relacionadas à autenticação"
+		},
+		{
+			"name": "Devices",
+			"item": [
+				{
+					"name": "Create Device",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"iPhone 16\",\n  \"location\": \"Escritorio\",\n  \"purchase_date\": \"2025-12-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devices"
+							]
+						},
+						"description": "### Cria um novo dispositivo"
+					},
+					"response": []
+				},
+				{
+					"name": "List Devices",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devices?page=1&in_use=0&location=Sala de Reunião&from=2025-01-17&to=2025-10-01",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devices"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "in_use",
+									"value": "0"
+								},
+								{
+									"key": "location",
+									"value": "Sala de Reunião"
+								},
+								{
+									"key": "from",
+									"value": "2025-01-17"
+								},
+								{
+									"key": "to",
+									"value": "2025-10-01"
+								}
+							]
+						},
+						"description": "### Lista dispositivos\n\n#### Aceita as seguintes query params:\n\nPágina: page={int}\n\nEm uso: in_use{0 ou 1}\n\nLocalizaçõa: location={string}\n\nData de aquisição: from={date}&to={date}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Device",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Motorola G3\",\n  \"location\": \"Casa\",\n  \"purchase_date\": \"2024-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devices/{{device_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devices",
+								"{{device_id}}"
+							]
+						},
+						"description": "### Atualiza dispositivo"
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle Device Use",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devices/{{device_id}}/use",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devices",
+								"{{device_id}}",
+								"use"
+							]
+						},
+						"description": "### Alterna o campo in_use entre verdadeiro (1) e falso (0)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Device",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devices/{{device_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devices",
+								"{{device_id}}"
+							]
+						},
+						"description": "### Realiza um soft delete adicionando um timestamp ao campo deleted_at"
+					},
+					"response": []
+				}
+			],
+			"description": "Rotas relacionadas com o gerenciamento de dispositivos celulares"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
