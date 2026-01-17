@@ -18,6 +18,8 @@ Route::get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout']);
     /*
     // Criar novo token
     Route::post('/tokens/create', function (Request $request) {
