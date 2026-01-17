@@ -41,6 +41,7 @@ class DeviceController extends Controller
                 'location',
                 'from',
                 'to',
+                'page'
             ])
         );
 

@@ -52,7 +52,15 @@ class DeviceRepository
             $params['to'] = $filters['to'];
         }
 
-        $sql .= " ORDER BY purchase_date DESC";
+        $sql .= " ORDER BY purchase_date DESC, id ASC";
+
+        // Paginação. Hard coded por agora para manter a especificação do projeto,
+        // mas seria interessante que o limit e offset fossem recebidos por query strings na api também.
+        if (isset($filters['page'])) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+            $params['limit'] = 10;
+            $params['offset'] = ($filters['page'] - 1) * 10;
+        }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
