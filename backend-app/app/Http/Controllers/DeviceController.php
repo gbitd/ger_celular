@@ -88,13 +88,18 @@ class DeviceController extends Controller
             auth()->id()
         );
 
-        if (! $updated) {
+        $updatedDevice = $this->devices->findById(
+            $id,
+            auth()->id()
+        );
+
+        if (! $updated || ! $updatedDevice) {
             return response()->json([
                 'message' => 'Dispositivo não encontrado'
             ], 404);
         }
 
-        return response()->noContent();
+        return response()->json($updatedDevice);
     }
 
 }

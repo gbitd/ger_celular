@@ -68,6 +68,20 @@ class DeviceRepository
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function findById($id, $userId)
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM devices
+            WHERE id = :id
+            AND user_id = :user_id
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $id, 'user_id' => $userId]);
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    }
+
     public function update($id, $userId, array $data)
     {
         $stmt = $this->pdo->prepare("
