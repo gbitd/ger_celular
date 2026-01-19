@@ -111,8 +111,6 @@ export class DevicesComponent {
     this.devices.update(list => [device, ...list]);
   }
 
-
-
   private loadDevices() {
     this.loading.set(true);
     this.error.set(false);
