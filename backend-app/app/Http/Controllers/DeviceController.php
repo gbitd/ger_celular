@@ -28,6 +28,11 @@ class DeviceController extends Controller
 
         return response()->json([
             'id' => $id,
+            'name' => $request->name,
+            'location' => $request->location,
+            'purchase_date' => $request->purchase_date,
+            'in_use' => 0,                              //Mysql trata BOOL como TINYINT. 0 = false, 1 = true
+            'user_id' => $request->user()->id,
         ], 201);
     }
 
