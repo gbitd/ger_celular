@@ -45,6 +45,15 @@ A aplicação estará disponível em:
 ```
 http://localhost:4200
 ```
+Para registrar um novo usuário acesse
+```
+http://localhost:4200/register
+```
+E para realizar login:
+```
+http://localhost:4200/login
+```
+
 
 > ⚠️ O frontend espera que a API esteja rodando localmente (via Laravel Sail), conforme descrito na seção de Backend.
 
