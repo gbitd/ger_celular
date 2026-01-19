@@ -1,5 +1,7 @@
 # Sistema de Gerenciamento de Dispositivos Celulares
 
+⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso siga as instruções abaixo.
+
 ## Frontend
 
 O frontend da aplicação é uma **SPA desenvolvida em Angular**, responsável por consumir a API REST do backend e fornecer a interface de gerenciamento dos dispositivos celulares.
