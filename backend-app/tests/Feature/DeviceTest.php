@@ -104,7 +104,7 @@ class DeviceTest extends TestCase
         $deviceId = $responsePost->json('id');
 
         $this->patchJson("/api/devices/{$deviceId}/use")
-            ->assertNoContent();
+            ->assertOk();
 
         $this->assertDatabaseHas('devices', [
             'id' => $deviceId,
