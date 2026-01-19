@@ -6,116 +6,92 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 import { DeviceService } from '../../core/services/device.service';
 import { Device } from '../../core/models/device.model';
 
 @Component({
-  template: `
-    <div class="container">
-
-      @if (loading()) {
-        <div class="loading">
-          <mat-spinner></mat-spinner>
-        </div>
-      }
-
-      @if (error()) {
-        <p class="error">Erro ao carregar dispositivos</p>
-      }
-
-      @if (!loading() && !error()) {
-        <table mat-table [dataSource]="devices()" class="mat-elevation-z2">
-
-          <!-- Nome -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Nome</th>
-            <td mat-cell *matCellDef="let device">{{ device.name }}</td>
-          </ng-container>
-
-          <!-- Localização -->
-          <ng-container matColumnDef="location">
-            <th mat-header-cell *matHeaderCellDef>Localização</th>
-            <td mat-cell *matCellDef="let device">{{ device.location }}</td>
-          </ng-container>
-
-          <!-- Em uso -->
-          <ng-container matColumnDef="in_use">
-            <th mat-header-cell *matHeaderCellDef>Em uso</th>
-            <td mat-cell *matCellDef="let device">
-              {{ device.in_use ? 'Sim' : 'Não' }}
-            </td>
-          </ng-container>
-
-          <!-- Data de compra -->
-          <ng-container matColumnDef="purchase_date">
-            <th mat-header-cell *matHeaderCellDef>Compra</th>
-            <td mat-cell *matCellDef="let device">
-              {{ device.purchase_date }}
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns"></tr>
-        </table>
-      }
-    </div>
-  `,
-  styles: [`
-    .container {
-      padding: 24px;
-    }
-
-    .loading {
-      display: flex;
-      justify-content: center;
-      margin-top: 40px;
-    }
-
-    .error {
-      color: red;
-      text-align: center;
-    }
-
-    table {
-      width: 100%;
-    }
-  `],
+  templateUrl: './devices.html',
+  styleUrls: ['./devices.scss'],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatTableModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DevicesComponent {
+  private fb = inject(FormBuilder);
   private deviceService = inject(DeviceService);
 
   devices = signal<Device[]>([]);
-  loading = signal(true);
+  loading = signal(false);
   error = signal(false);
 
   columns = ['name', 'location', 'in_use', 'purchase_date'];
+
+  filtersForm = this.fb.group({
+    location: [''],
+    in_use: [null as 0 | 1 | null],
+    from: [''],
+    to: ['']
+  });
 
   constructor() {
     this.loadDevices();
   }
 
-  private loadDevices() {
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.deviceService.getDevices().subscribe({
-      next: devices => {
-        this.devices.set(devices);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set(true);
-        this.loading.set(false);
-      }
-    });
+  applyFilters() {
+    this.loadDevices();
   }
+
+  clearFilters() {
+    this.filtersForm.reset({
+      location: '',
+      in_use: null,
+      from: '',
+      to: ''
+    });
+
+    this.loadDevices();
+  }
+
+private loadDevices() {
+  this.loading.set(true);
+  this.error.set(false);
+
+  const raw = this.filtersForm.value;
+
+  const filters = {
+    location: raw.location || undefined,
+    in_use: raw.in_use ?? undefined,
+    from: raw.from || undefined,
+    to: raw.to || undefined
+  };
+
+  this.deviceService.getDevices(filters).subscribe({
+    next: devices => {
+      this.devices.set(devices);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set(true);
+      this.loading.set(false);
+    }
+  });
+}
+
 }

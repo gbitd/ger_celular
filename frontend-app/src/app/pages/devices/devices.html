@@ -1,1 +1,81 @@
-<p>devices works!</p>
+<div class="container">
+
+    <!-- FILTROS -->
+<form [formGroup]="filtersForm" class="filters" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Localização</mat-label>
+    <input matInput formControlName="location">
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Em uso</mat-label>
+    <mat-select formControlName="in_use">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option [value]="1">Sim</mat-option>
+      <mat-option [value]="0">Não</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>De</mat-label>
+    <input matInput type="date" formControlName="from">
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Até</mat-label>
+    <input matInput type="date" formControlName="to">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="button" (click)="applyFilters()">
+    Filtrar
+  </button>
+
+  <button mat-button type="button" (click)="clearFilters()">
+    Limpar
+  </button>
+</form>
+
+    <!-- LOADING -->
+    @if (loading()) {
+    <div class="loading">
+        <mat-spinner></mat-spinner>
+    </div>
+    }
+
+    <!-- ERRO -->
+    @if (error()) {
+    <p class="error">Erro ao carregar dispositivos</p>
+    }
+
+    <!-- TABELA -->
+    @if (!loading() && !error()) {
+    <table mat-table [dataSource]="devices()" class="mat-elevation-z2">
+
+        <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let d">{{ d.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef>Localização</th>
+        <td mat-cell *matCellDef="let d">{{ d.location }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="in_use">
+        <th mat-header-cell *matHeaderCellDef>Em uso</th>
+        <td mat-cell *matCellDef="let d">
+            {{ d.in_use ? 'Sim' : 'Não' }}
+        </td>
+        </ng-container>
+
+        <ng-container matColumnDef="purchase_date">
+        <th mat-header-cell *matHeaderCellDef>Compra</th>
+        <td mat-cell *matCellDef="let d">{{ d.purchase_date }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+    }
+</div>

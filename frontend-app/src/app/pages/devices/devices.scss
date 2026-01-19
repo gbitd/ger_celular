@@ -1,0 +1,26 @@
+    .container {
+      padding: 24px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: end;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
