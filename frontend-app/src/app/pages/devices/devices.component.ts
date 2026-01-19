@@ -17,6 +17,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DeviceService } from '../../core/services/device.service';
 import { Device } from '../../core/models/device.model';
+import { DeviceFormComponent } from '../device-form/device-form.component';
+
 
 
 const FILTERS_STORAGE_KEY = 'devices-filters';
@@ -32,7 +34,8 @@ const FILTERS_STORAGE_KEY = 'devices-filters';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
+    DeviceFormComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -103,6 +106,11 @@ export class DevicesComponent {
       error: () => alert('Erro ao excluir dispositivo')
     });
   }
+
+  onDeviceCreated(device: Device) {
+    this.devices.update(list => [device, ...list]);
+  }
+
 
 
   private loadDevices() {
