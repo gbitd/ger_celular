@@ -1,6 +1,15 @@
 # Sistema de Gerenciamento de Dispositivos Celulares
 
-⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso siga as instruções abaixo.
+⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso siga as instruções abaixo (ambiente Linux).
+
+### Garanta que você possua node, npm e a Angular CLI instalados
+```bash
+npm install -g @angular/cli
+```
+### Garanta que você possua Composer e PHP instalados
+```bash
+/bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
+```
 
 ## Frontend
 
