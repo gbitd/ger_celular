@@ -274,4 +274,5 @@ Arquivo:
 - Finalizar testes automatizados para o Frontend;
 - Implementar deploy com docker-compose;
 - Melhorar a UX com mensagens de sucesso e erro com MatSnackBar;
+- Implementar a paginação no frontend
 - Separar os components do frontend em diferentes endpoints;
