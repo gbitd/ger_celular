@@ -45,7 +45,7 @@ export class DevicesComponent {
   error = signal(false);
 
 
-  columns = ['name', 'location', 'in_use', 'purchase_date'];
+  columns = ['name', 'location', 'in_use', 'purchase_date', 'actions'];
 
   filtersForm = this.fb.group({
     location: [''],
@@ -75,6 +75,35 @@ export class DevicesComponent {
     localStorage.removeItem(FILTERS_STORAGE_KEY);
     this.loadDevices();
   }
+
+  toggleUse(device: Device) {
+    this.deviceService.toggleUse(device.id).subscribe({
+      next: updated => {
+        this.devices.update(list =>
+          list.map(d => d.id === updated.id ? updated : d)
+        );
+      },
+      error: () => alert('Erro ao alterar status')
+    });
+  }
+
+  delete(device: Device) {
+    const confirmed = confirm(
+      `Deseja realmente excluir "${device.name}"?`
+    );
+
+    if (!confirmed) return;
+
+    this.deviceService.deleteDevice(device.id).subscribe({
+      next: () => {
+        this.devices.update(list =>
+          list.filter(d => d.id !== device.id)
+        );
+      },
+      error: () => alert('Erro ao excluir dispositivo')
+    });
+  }
+
 
   private loadDevices() {
     this.loading.set(true);
