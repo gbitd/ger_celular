@@ -107,8 +107,8 @@ export class DevicesComponent {
     });
   }
 
-  onDeviceCreated(device: Device) {
-    this.devices.update(list => [device, ...list]);
+  onDeviceCreated() {
+    this.loadDevices();
   }
 
   private loadDevices() {

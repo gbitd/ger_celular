@@ -88,7 +88,7 @@ export class DeviceFormComponent {
 
   loading = signal(false);
 
-  created = output<Device>();
+  created = output<void>();
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -103,8 +103,8 @@ export class DeviceFormComponent {
 
     this.deviceService.createDevice(this.form.getRawValue())
       .subscribe({
-        next: (device: Device) => {
-          this.created.emit(device);
+        next: () => {
+          this.created.emit();
           this.form.reset();
           this.loading.set(false);
         },
