@@ -18,6 +18,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { DeviceService } from '../../core/services/device.service';
 import { Device } from '../../core/models/device.model';
 
+
+const FILTERS_STORAGE_KEY = 'devices-filters';
+
 @Component({
   templateUrl: './devices.html',
   styleUrls: ['./devices.scss'],
@@ -41,6 +44,7 @@ export class DevicesComponent {
   loading = signal(false);
   error = signal(false);
 
+
   columns = ['name', 'location', 'in_use', 'purchase_date'];
 
   filtersForm = this.fb.group({
@@ -51,10 +55,12 @@ export class DevicesComponent {
   });
 
   constructor() {
+    this.restoreFilters();
     this.loadDevices();
   }
 
   applyFilters() {
+    this.saveFilters();
     this.loadDevices();
   }
 
@@ -66,32 +72,53 @@ export class DevicesComponent {
       to: ''
     });
 
+    localStorage.removeItem(FILTERS_STORAGE_KEY);
     this.loadDevices();
   }
 
-private loadDevices() {
-  this.loading.set(true);
-  this.error.set(false);
+  private loadDevices() {
+    this.loading.set(true);
+    this.error.set(false);
 
-  const raw = this.filtersForm.value;
+    const raw = this.filtersForm.value;
 
-  const filters = {
-    location: raw.location || undefined,
-    in_use: raw.in_use ?? undefined,
-    from: raw.from || undefined,
-    to: raw.to || undefined
-  };
+    const filters = {
+      location: raw.location || undefined,
+      in_use: raw.in_use ?? undefined,
+      from: raw.from || undefined,
+      to: raw.to || undefined
+    };
 
-  this.deviceService.getDevices(filters).subscribe({
-    next: devices => {
-      this.devices.set(devices);
-      this.loading.set(false);
-    },
-    error: () => {
-      this.error.set(true);
-      this.loading.set(false);
+    this.deviceService.getDevices(filters).subscribe({
+      next: devices => {
+        this.devices.set(devices);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set(true);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private saveFilters() {
+    localStorage.setItem(
+      FILTERS_STORAGE_KEY,
+      JSON.stringify(this.filtersForm.value)
+    );
+  }
+
+  private restoreFilters() {
+    const stored = localStorage.getItem(FILTERS_STORAGE_KEY);
+
+    if (!stored) return;
+
+    try {
+      this.filtersForm.patchValue(JSON.parse(stored));
+    } catch {
+      localStorage.removeItem(FILTERS_STORAGE_KEY);
     }
-  });
-}
+  }
+
 
 }
