@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +26,11 @@ import { AuthService } from '../../core/auth/auth.service';
         <button mat-raised-button color="primary">
           Entrar
         </button>
+
+        <button mat-button type="button" routerLink="/register">
+          Criar conta
+        </button>
+
       </form>
     </mat-card>
   `,
@@ -36,7 +42,8 @@ import { AuthService } from '../../core/auth/auth.service';
     ReactiveFormsModule,
     MatCardModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterLink
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
