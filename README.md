@@ -65,6 +65,11 @@ DB_PASSWORD=password
 composer install
 ```
 
+Ou caso não tenha PHP 8.5 e Composer equivalente instalados, use esta imagem docker:
+```bash
+docker run --rm -v $(pwd):/app composer:latest install
+
+```
 #### 3. Inicializar ambiente Docker/Sail
 
 ```bash
