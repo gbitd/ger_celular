@@ -38,19 +38,36 @@ class DeviceController extends Controller
 
     public function index(Request $request)
     {
+        $userId = $request->user()->id;
+        $filters = $request->only([
+            'in_use',
+            'location',
+            'from',
+            'to',
+            'page'
+        ]);
+        // Paginação. Hard coded por agora para manter a especificação do projeto,
+        // mas seria interessante que o limit e offset fossem recebidos por query strings na api também.
+        $filters['per_page'] = 10;
 
-        $list = $this->devices->findByUser(
-            $request->user()->id,
-            $request->only([
-                'in_use',
-                'location',
-                'from',
-                'to',
-                'page'
-            ])
-        );
+        $filteredList = $this->devices->findByUserFiltered($userId, $filters);
+        $countTotal = $this->devices->countTotalByUser($userId);
 
-        return response()->json($list);
+        $meta = [
+            'current_page' => (int)$filters['page'],
+            'last_page' => ceil($countTotal / $filters['per_page']),
+            'per_page' => $filters['per_page'],
+            'total' => $countTotal
+        ];
+
+        if ($countTotal > 0 && $meta['current_page'] > $meta['last_page']){
+            return response()->json([
+                'message' => 'Página inválida'
+            ], 400);
+        }
+        return response()->json([
+            'data' => $filteredList,
+            'meta' => $meta]);
     }
 
     public function update(UpdateDeviceRequest $request, int $id)

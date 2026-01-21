@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Device } from '../models/device.model';
+import { PaginatedResponse } from '../models/pagination.model';
 
 const API_URL = 'http://localhost:8080/api/devices';
 
@@ -10,15 +11,15 @@ export interface DeviceFilters {
   in_use?: 0 | 1;
   from?: string;
   to?: string;
-  page?: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class DeviceService {
   private http = inject(HttpClient);
 
-  getDevices(filters: DeviceFilters = {}): Observable<Device[]> {
-    let params = new HttpParams();
+  getDevices(filters: DeviceFilters = {}, page = 1): Observable<PaginatedResponse<Device>> {
+
+    let params = new HttpParams().set('page', page);
 
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
@@ -26,7 +27,10 @@ export class DeviceService {
       }
     });
 
-    return this.http.get<Device[]>(API_URL, { params });
+    return this.http.get<PaginatedResponse<Device>>(
+      API_URL,
+      { params }
+    );
   }
 
   createDevice(device: {

@@ -24,7 +24,7 @@ class DeviceRepository
         return $this->pdo->lastInsertId();
     }
 
-    public function findByUser($userId, $filters)
+    public function findByUserFiltered($userId, $filters): array
     {
         $sql = "SELECT * FROM devices
                 WHERE user_id = :user_id
@@ -54,12 +54,10 @@ class DeviceRepository
 
         $sql .= " ORDER BY purchase_date DESC, id ASC";
 
-        // Paginação. Hard coded por agora para manter a especificação do projeto,
-        // mas seria interessante que o limit e offset fossem recebidos por query strings na api também.
         if (isset($filters['page'])) {
             $sql .= " LIMIT :limit OFFSET :offset";
-            $params['limit'] = 10;
-            $params['offset'] = ($filters['page'] - 1) * 10;
+            $params['limit'] = $filters['per_page'];
+            $params['offset'] = ($filters['page'] - 1) * $filters['per_page'];
         }
 
         $stmt = $this->pdo->prepare($sql);
@@ -68,7 +66,30 @@ class DeviceRepository
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function findById($id, $userId)
+    public function findByUserTotal($userId): array
+    {
+         $sql = "SELECT * FROM devices
+                WHERE user_id = :user_id
+                AND deleted_at IS NULL";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function countTotalByUser($userId): int
+    {
+        $sql = "SELECT COUNT(*) FROM devices
+                WHERE user_id = :user_id
+                AND deleted_at IS NULL";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+
+        return $stmt->fetchColumn();
+    }
+
+    public function findById($id, $userId): array
     {
         $stmt = $this->pdo->prepare("
             SELECT * FROM devices

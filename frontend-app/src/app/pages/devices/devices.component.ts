@@ -46,6 +46,8 @@ export class DevicesComponent {
   devices = signal<Device[]>([]);
   loading = signal(false);
   error = signal(false);
+  currentPage = signal(1);
+  lastPage = signal(1);
 
 
   columns = ['name', 'location', 'in_use', 'purchase_date', 'actions'];
@@ -64,7 +66,7 @@ export class DevicesComponent {
 
   applyFilters() {
     this.saveFilters();
-    this.loadDevices();
+    this.loadDevices(1);
   }
 
   clearFilters() {
@@ -76,7 +78,7 @@ export class DevicesComponent {
     });
 
     localStorage.removeItem(FILTERS_STORAGE_KEY);
-    this.loadDevices();
+    this.loadDevices(1);
   }
 
   toggleUse(device: Device) {
@@ -108,10 +110,10 @@ export class DevicesComponent {
   }
 
   onDeviceCreated() {
-    this.loadDevices();
+    this.loadDevices(1);
   }
 
-  private loadDevices() {
+  public loadDevices(page = 1) {
     this.loading.set(true);
     this.error.set(false);
 
@@ -124,9 +126,11 @@ export class DevicesComponent {
       to: raw.to || undefined
     };
 
-    this.deviceService.getDevices(filters).subscribe({
-      next: devices => {
-        this.devices.set(devices);
+    this.deviceService.getDevices(filters, page).subscribe({
+      next: response => {
+        this.devices.set(response.data);
+        this.currentPage.set(response.meta.current_page);
+        this.lastPage.set(response.meta.last_page);
         this.loading.set(false);
       },
       error: () => {
