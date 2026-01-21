@@ -135,7 +135,7 @@ POST /api/devices
 GET /api/devices
 ```
 
-Filtros opcionais:
+Filtros opcionais (Query strings):
 - `in_use` (0 ou 1)
 - `location`
 - `from`
