@@ -1,6 +1,7 @@
 # Sistema de Gerenciamento de Dispositivos Celulares
 
-⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso siga as instruções abaixo (ambiente Linux).
+⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso, você **deve utilizar um ambiente Linux** e seguir as instruções abaixo. Caso não esteja em um ambiente Linux, busque documentação específica para instalar estas dependências no seu sistema.
+Em breve será adicionada uma forma de deploy agnóstica a partir de docker-compose para facilitar a execução.
 
 ### Garanta que você possua node, npm e a Angular CLI instalados
 ```bash
@@ -10,6 +11,189 @@ npm install -g @angular/cli
 ```bash
 /bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
 ```
+
+### Garante que você possua Docker e Docker Compose instalados e configurados
+
+## Backend
+
+Com o código fonte disponível no diretório ./backend-app, uma API REST desenvolvida em **Laravel 12** para gerenciamento de dispositivos celulares, com autenticação de usuários e operações CRUD, utilizando **PDO diretamente** para acesso ao banco de dados, sem uso de Eloquent ORM no domínio das regras de negócio aplicação.
+
+---
+
+### 📋 Funcionalidades
+
+- Autenticação de usuários via API (Laravel Sanctum)
+- CRUD de dispositivos celulares
+- Soft Delete de dispositivos
+- Filtros e ordenações na listagem
+- Isolamento de dados por usuário autenticado
+- Validações de entrada
+- Testes automatizados com PHPUnit
+- Documentação da API via Postman Collection
+
+---
+
+### ⚙️ Setup do Projeto
+
+Para a configuração do ambiente de desenvolvimento do backend foi utilizado o `Laravel Sail`, uma interface de linha de comando que ajuda a interagir com o ambiente de desenvolvimento Docker padrão do Laravel.
+
+Por hora ainda não configurei um deploy com docker-compose, por isso ainda se faz necessário simular o ambiente de desenvolvimento para executar o projeto.
+
+#### Entre no diretório ./backend-app
+
+```bash
+cd backend-app
+```
+
+#### 1. Configurar `.env`
+
+Copie o .env.example:
+
+```bash
+cp .env.example .env
+```
+
+Preencha os campos com o padrão Laravel Sail:
+
+```env
+DB_PASSWORD=password
+```
+
+#### 2. Instalar dependências
+
+```bash
+composer install
+```
+
+#### 3. Inicializar ambiente Docker/Sail
+
+```bash
+./vendor/bin/sail up -d
+```
+
+#### 4. Criar `APP_KEY`
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+#### 5. Rodar migrations
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+#### Pronto!
+
+Seu ambiente de desenvolvimento está totalmente configurado e a API está rodando em `localhost:8080`
+
+---
+
+### 🔐 Autenticação
+
+A autenticação é feita via **Laravel Sanctum**, usando **Bearer Token**.
+
+#### Endpoints públicos
+
+- `POST /api/register`
+- `POST /api/login`
+- `POST /api/logout`
+
+#### Endpoints protegidos
+
+- Todos os endpoints de `/api/devices`
+
+O token retornado no login deve ser enviado no header:
+
+```
+Authorization: Bearer {TOKEN}
+```
+
+---
+
+### 📡 Endpoints da API
+
+#### ➕ Criar dispositivo
+
+```
+POST /api/devices
+```
+
+```json
+{
+  "name": "iPhone 16",
+  "location": "Escritório",
+  "purchase_date": "2026-01-01"
+}
+```
+
+---
+
+#### 📄 Listar dispositivos
+
+```
+GET /api/devices
+```
+
+Filtros opcionais:
+- `in_use` (0 ou 1)
+- `location`
+- `from`
+- `to`
+- `page`
+
+---
+
+#### ✏️ Atualizar dispositivo
+
+```
+PUT /api/devices/{id}
+```
+
+---
+
+#### 🔁 Marcar / desmarcar como em uso
+
+```
+PATCH /api/devices/{id}/use
+```
+
+---
+
+#### 🗑️ Excluir dispositivo
+
+```
+DELETE /api/devices/{id}
+```
+
+---
+
+### 🧪 Testes Automatizados
+
+Os testes da API foram escritos usando **PHPUnit**.
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+---
+
+## 📘 Documentação da API (Postman)
+
+A documentação da API está disponível em uma **Postman Collection**.
+
+Arquivo:
+```
+./ger_celular API.postman_collection.json
+```
+
+### Como usar
+1. Importar a collection no Postman
+2. Executar o endpoint **Register** e/ou **Login**
+3. O token será salvo automaticamente. Caso não aconteça, copie o token resultante e cole nas Headers (Authorization: Bearer {{Token}}) dos endpoints protegidos que deseja executar.
+4. Executar os endpoints protegidos
+
+---
 
 ## Frontend
 
@@ -58,6 +242,7 @@ Para registrar um novo usuário acesse
 ```
 http://localhost:4200/register
 ```
+> ⚠️ Foram implementadas validações para formato de e-mail e senha. Senhas precisam ser maiores que 6 caracteres.
 E para realizar login:
 ```
 http://localhost:4200/login
@@ -65,187 +250,6 @@ http://localhost:4200/login
 
 
 > ⚠️ O frontend espera que a API esteja rodando localmente (via Laravel Sail), conforme descrito na seção de Backend.
-
----
-
-## Backend
-
-Com o código fonte disponível no diretório ./backend-app, uma API REST desenvolvida em **Laravel 12** para gerenciamento de dispositivos celulares, com autenticação de usuários e operações CRUD, utilizando **PDO diretamente** para acesso ao banco de dados, sem uso de Eloquent ORM no domínio das regras de negócio aplicação.
-
----
-
-## 📋 Funcionalidades
-
-- Autenticação de usuários via API (Laravel Sanctum)
-- CRUD de dispositivos celulares
-- Soft Delete de dispositivos
-- Filtros e ordenações na listagem
-- Isolamento de dados por usuário autenticado
-- Validações de entrada
-- Testes automatizados com PHPUnit
-- Documentação da API via Postman Collection
-
----
-
-## ⚙️ Setup do Projeto
-
-Para a configuração do ambiente de desenvolvimento deste projeto foi utilizado o `Laravel Sail`, uma interface de linha de comando que ajuda a interagir com o ambiente de desenvolvimento Docker padrão do Laravel.
-
-Por hora ainda não configurei um deploy com docker-compose, por isso ainda se faz necessário simular o ambiente de desenvolvimento para executar o projeto.
-
-### Entre no diretório ./backend-app
-
-```bash
-cd backend-app
-```
-
-### 1. Configurar `.env`
-
-Copie o .env.example:
-
-```bash
-cp .env.example .env
-```
-
-Preencha os campos com o padrão Laravel Sail:
-
-```env
-DB_PASSWORD=password
-```
-
-### 2. Instalar dependências
-
-```bash
-composer install
-```
-
-### 3. Inicializar ambiente Docker/Sail
-
-```bash
-./vendor/bin/sail up -d
-```
-
-### 4. Criar `APP_KEY`
-
-```bash
-./vendor/bin/sail artisan key:generate
-```
-
-### 5. Rodar migrations
-
-```bash
-./vendor/bin/sail artisan migrate
-```
-
-### Pronto!
-
-Seu ambiente de desenvolvimento está totalmente configurado e a API está rodando em `localhost:8080`
-
----
-
-## 🔐 Autenticação
-
-A autenticação é feita via **Laravel Sanctum**, usando **Bearer Token**.
-
-### Endpoints públicos
-
-- `POST /api/register`
-- `POST /api/login`
-- `POST /api/logout`
-
-### Endpoints protegidos
-
-- Todos os endpoints de `/api/devices`
-
-O token retornado no login deve ser enviado no header:
-
-```
-Authorization: Bearer {TOKEN}
-```
-
----
-
-## 📡 Endpoints da API
-
-### ➕ Criar dispositivo
-
-```
-POST /api/devices
-```
-
-```json
-{
-  "name": "iPhone 16",
-  "location": "Escritório",
-  "purchase_date": "2026-01-01"
-}
-```
-
----
-
-### 📄 Listar dispositivos
-
-```
-GET /api/devices
-```
-
-Filtros opcionais:
-- `in_use` (0 ou 1)
-- `location`
-- `from`
-- `to`
-- `page`
-
----
-
-### ✏️ Atualizar dispositivo
-
-```
-PUT /api/devices/{id}
-```
-
----
-
-### 🔁 Marcar / desmarcar como em uso
-
-```
-PATCH /api/devices/{id}/use
-```
-
----
-
-### 🗑️ Excluir dispositivo
-
-```
-DELETE /api/devices/{id}
-```
-
----
-
-## 🧪 Testes Automatizados
-
-Os testes da API foram escritos usando **PHPUnit**.
-
-```bash
-./vendor/bin/sail artisan test
-```
-
----
-
-## 📘 Documentação da API (Postman)
-
-A documentação da API está disponível em uma **Postman Collection**.
-
-Arquivo:
-```
-./ger_celular API.postman_collection.json
-```
-
-### Como usar
-1. Importar a collection no Postman
-2. Executar o endpoint **Register** e/ou **Login**
-3. O token será salvo automaticamente. Caso não aconteça, copie o token resultante e cole nas Headers (Authorization: Bearer {{Token}}) dos endpoints protegidos que deseja executar.
-4. Executar os endpoints protegidos
 
 ---
 
@@ -274,5 +278,6 @@ Arquivo:
 - Finalizar testes automatizados para o Frontend;
 - Implementar deploy com docker-compose;
 - Melhorar a UX com mensagens de sucesso e erro com MatSnackBar;
+  - Especialmente para a validação de registro
 - Implementar a paginação no frontend
 - Separar os components do frontend em diferentes endpoints;
