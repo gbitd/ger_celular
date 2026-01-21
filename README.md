@@ -137,7 +137,7 @@ POST /api/devices
 #### 📄 Listar dispositivos
 
 ```
-GET /api/devices
+GET /api/devices?page=1
 ```
 
 Filtros opcionais (Query strings):
@@ -145,7 +145,7 @@ Filtros opcionais (Query strings):
 - `location`
 - `from`
 - `to`
-- `page`
+- `page` (Obrigatório)
 
 ---
 
