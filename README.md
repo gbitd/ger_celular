@@ -12,7 +12,7 @@ npm install -g @angular/cli
 /bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
 ```
 
-### Garante que você possua Docker e Docker Compose instalados e configurados
+### Garanta que você possua Docker e Docker Compose instalados e configurados
 
 ## Backend
 
