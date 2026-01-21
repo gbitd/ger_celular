@@ -3,11 +3,11 @@
 ⚠️ Por hora faz-se necessário simular o ambiente de desenvolvimento para executar a aplicação. Para isso, você **deve utilizar um ambiente Linux** e seguir as instruções abaixo. Caso não esteja em um ambiente Linux, busque documentação específica para instalar estas dependências no seu sistema.
 Em breve será adicionada uma forma de deploy agnóstica a partir de docker-compose para facilitar a execução.
 
-### Garanta que você possua node, npm e a Angular CLI instalados
+### Garanta que você possua node(22.18+), npm(10.9+) e a Angular CLI instalados
 ```bash
 npm install -g @angular/cli
 ```
-### Garanta que você possua Composer e PHP instalados
+### Garanta que você possua Composer(2.8+) e PHP (8.5+) instalados
 ```bash
 /bin/bash -c "$(curl -fsSL https://php.new/install/linux)"
 ```
