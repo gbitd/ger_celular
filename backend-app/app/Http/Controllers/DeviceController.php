@@ -105,23 +105,23 @@ class DeviceController extends Controller
 
     public function toggleUse(int $id)
     {
-        $updated = $this->devices->toggleUse(
+        $toggle = $this->devices->toggleUse(
             $id,
             auth()->id()
         );
 
-        $updatedDevice = $this->devices->findById(
+        $toggledDevice = $this->devices->findById(
             $id,
             auth()->id()
         );
 
-        if (! $updated || ! $updatedDevice) {
+        if (! $toggle || empty($toggledDevice)) {
             return response()->json([
                 'message' => 'Dispositivo não encontrado'
             ], 404);
         }
 
-        return response()->json($updatedDevice);
+        return response()->json($toggledDevice);
     }
 
 }

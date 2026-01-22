@@ -63,7 +63,7 @@ class DeviceTest extends TestCase
 
         // Device do usuário autenticado
         $this->postJson('/api/devices', [
-            'name' => 'Meu Device',
+            'name' => 'Meu Dispositivo',
             'location' => 'Casa',
             'purchase_date' => '2024-01-01',
         ]);
@@ -74,20 +74,21 @@ class DeviceTest extends TestCase
             VALUES (?, ?, ?, ?, ?, NOW())"
         );
         $stmt->execute([
-            'Outro Device',
+            'Outro Dispositivo',
             'Escritorio',
             '2025-06-04',
             0,
             $otherUser->id,
         ]);
 
-        $response = $this->getJson('/api/devices');
+        $response = $this->getJson('/api/devices?page=1');
 
-        $response->assertOk()
-                ->assertJsonCount(1)
-                ->assertJsonFragment([
-                    'name' => 'Meu Device',
-                ]);
+        $response->assertOk();
+
+        $data = $response->json('data');
+
+        $this->assertCount(1, $data);
+        $this->assertEquals('Meu Dispositivo', $data[0]['name']);
     }
 
 
