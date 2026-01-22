@@ -12,7 +12,7 @@ class DeviceRepository
         $this->pdo = DB::connection()->getPdo();
     }
 
-    public function create(array $data)
+    public function create(array $data): int
     {
         $stmt = $this->pdo->prepare("
             INSERT INTO devices
@@ -24,7 +24,7 @@ class DeviceRepository
         return $this->pdo->lastInsertId();
     }
 
-    public function findByUserFiltered($userId, $filters): array
+    public function findByUserFiltered(int $userId, array $filters): array
     {
         $sql = "SELECT * FROM devices
                 WHERE user_id = :user_id
@@ -66,7 +66,7 @@ class DeviceRepository
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function findByUserTotal($userId): array
+    public function findByUserTotal(int $userId): array
     {
          $sql = "SELECT * FROM devices
                 WHERE user_id = :user_id
@@ -78,7 +78,7 @@ class DeviceRepository
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function countTotalByUser($userId): int
+    public function countTotalByUser(int $userId): int
     {
         $sql = "SELECT COUNT(*) FROM devices
                 WHERE user_id = :user_id
@@ -89,7 +89,7 @@ class DeviceRepository
         return $stmt->fetchColumn();
     }
 
-    public function findById($id, $userId): array
+    public function findById(int $id, int $userId): array
     {
         $stmt = $this->pdo->prepare("
             SELECT * FROM devices
@@ -99,11 +99,11 @@ class DeviceRepository
         ");
         $stmt->execute(['id' => $id, 'user_id' => $userId]);
 
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
 
     }
 
-    public function update($id, $userId, array $data)
+    public function update(int $id, int $userId, array $data): bool
     {
         $stmt = $this->pdo->prepare("
             UPDATE devices SET
@@ -121,7 +121,7 @@ class DeviceRepository
         return $stmt->rowCount() > 0;   // Se nenhuma row é afetada, propaga erro de negócio
     }
 
-    public function softDelete($id, $userId)
+    public function softDelete(int $id, int $userId): bool
     {
         $stmt = $this->pdo->prepare("
             UPDATE devices
@@ -134,7 +134,7 @@ class DeviceRepository
         return $stmt->rowCount() > 0;
     }
 
-    public function toggleUse($id, $userId)
+    public function toggleUse(int $id, int $userId): bool
     {
         $stmt = $this->pdo->prepare("
             UPDATE devices
